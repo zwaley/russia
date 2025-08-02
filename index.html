@@ -29,12 +29,21 @@
             padding: 10px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            max-width: 420px;
-            width: 95vw;
+            max-width: min(95vw, 450px);
+            width: 100%;
             margin: 5px auto;
             min-height: calc(100vh - 10px);
             display: flex;
             flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                max-width: 95vw;
+                padding: 8px;
+                margin: 2px auto;
+                min-height: calc(100vh - 4px);
+            }
         }
 
         .game-header {
@@ -57,6 +66,17 @@
             color: rgba(255, 255, 255, 0.8);
             text-align: right;
             line-height: 1.2;
+        }
+
+        @media (max-width: 768px) {
+            .game-controls {
+                font-size: 0.5em;
+                line-height: 1.1;
+            }
+            
+            .game-header h1 {
+                font-size: 1.1em;
+            }
         }
 
         .score-board {
@@ -86,8 +106,16 @@
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
             flex: 1;
             width: 100%;
-            max-width: 400px;
+            max-width: min(90vw, 400px);
+            aspect-ratio: 10/20;
             min-height: 0;
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                max-width: 85vw;
+                aspect-ratio: 10/18;
+            }
         }
 
         #gameCanvas {
@@ -348,19 +376,27 @@
             const gameBoard = document.querySelector('.game-board');
             const boardRect = gameBoard.getBoundingClientRect();
             
-            // 设置画布实际像素尺寸
-            canvas.width = BOARD_WIDTH * Math.floor(boardRect.width / BOARD_WIDTH);
-            canvas.height = BOARD_HEIGHT * Math.floor(boardRect.height / BOARD_HEIGHT);
+            // 计算可用空间，留出边框空间
+            const availableWidth = boardRect.width - 6; // 减去边框
+            const availableHeight = boardRect.height - 6;
             
-            // 计算方块大小
-            BLOCK_SIZE = Math.min(
-                Math.floor(canvas.width / BOARD_WIDTH),
-                Math.floor(canvas.height / BOARD_HEIGHT)
-            );
+            // 根据宽高比计算最佳方块大小
+            const blockSizeByWidth = Math.floor(availableWidth / BOARD_WIDTH);
+            const blockSizeByHeight = Math.floor(availableHeight / BOARD_HEIGHT);
             
-            // 重新调整画布尺寸以确保精确匹配
+            // 选择较小的方块大小以确保完全适配
+            BLOCK_SIZE = Math.min(blockSizeByWidth, blockSizeByHeight);
+            
+            // 确保最小方块大小
+            BLOCK_SIZE = Math.max(BLOCK_SIZE, 15);
+            
+            // 设置画布尺寸
             canvas.width = BOARD_WIDTH * BLOCK_SIZE;
             canvas.height = BOARD_HEIGHT * BLOCK_SIZE;
+            
+            // 设置画布样式以居中显示
+            canvas.style.width = canvas.width + 'px';
+            canvas.style.height = canvas.height + 'px';
         }
         
         // 页面加载时初始化
