@@ -26,7 +26,7 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
             max-width: 400px;
@@ -35,31 +35,32 @@
 
         .game-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: white;
         }
 
         .game-header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
+            font-size: 1.5em;
+            margin-bottom: 5px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .score-board {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .score-item {
             background: rgba(255, 255, 255, 0.2);
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
             color: white;
             font-weight: bold;
             text-align: center;
             flex: 1;
-            margin: 0 5px;
+            margin: 0 3px;
+            font-size: 0.9em;
         }
 
         .game-board {
@@ -787,24 +788,8 @@
     </script>
     
     <!-- 操控说明 -->
-    <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 8px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
-        <h3 style="margin: 0 0 10px 0; color: #2c3e50;">🎮 操控说明</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div>
-                <strong>🎯 基本操作：</strong><br>
-                • 水平拖拽：精确移动方块<br>
-                • 向下滑动：瞬降到底部<br>
-                • 轻点屏幕：旋转方块<br>
-                • P键：暂停/继续游戏
-            </div>
-            <div>
-                <strong>💡 操作技巧：</strong><br>
-                • 拖拽时方块跟随手指移动<br>
-                • 向下快速滑动触发瞬降<br>
-                • 轻点任意位置都可旋转<br>
-                • 支持触屏和键盘操作
-            </div>
-        </div>
+    <div style="margin-top: 10px; padding: 8px 12px; background-color: rgba(255, 255, 255, 0.1); border-radius: 6px; font-family: Arial, sans-serif; font-size: 12px; color: white; text-align: center; backdrop-filter: blur(5px);">
+        🎮 操控：水平拖拽移动 | 向下滑动瞬降 | 轻点旋转 | P键暂停
     </div>
 </body>
 </html>
