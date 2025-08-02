@@ -63,16 +63,27 @@
         }
 
         .game-controls {
-            font-size: 0.6em;
-            color: rgba(255, 255, 255, 0.8);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px 8px;
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.9);
             text-align: right;
+            font-weight: 500;
+            max-width: 120px;
+        }
+
+        .control-item {
+            text-align: center;
             line-height: 1.2;
         }
 
         @media (max-width: 768px) {
             .game-controls {
-                font-size: 0.5em;
-                line-height: 1.1;
+                font-size: 0.75em;
+                max-width: 110px;
+                gap: 1px 6px;
             }
             
             .game-header h1 {
@@ -313,9 +324,10 @@
         <div class="game-header">
             <h1>俄罗斯方块 <span style="font-size: 0.5em; color: #ffff00;">v2.0</span></h1>
             <div class="game-controls">
-                水平拖拽移动<br>
-                向下滑动瞬降<br>
-                轻点旋转 | P键暂停
+                <div class="control-item">水平拖拽移动</div>
+                <div class="control-item">向下滑动瞬降</div>
+                <div class="control-item">轻点旋转</div>
+                <div class="control-item">P键暂停</div>
             </div>
         </div>
         
