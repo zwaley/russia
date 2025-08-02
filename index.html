@@ -564,11 +564,15 @@
                     currentPiece.y++;
                 } else {
                     if (currentPiece) {
-                        placePiece(currentPiece);
-                        clearLines();
-                    }
-                    
-                    currentPiece = createPiece();
+                    placePiece(currentPiece);
+                    clearLines();
+                }
+                
+                // 清理移动状态，确保新方块不受影响
+                stopContinuousMove();
+                keyPressed = {};
+                
+                currentPiece = createPiece();
                     
                     if (checkCollision(currentPiece)) {
                         gameOver();
@@ -650,6 +654,11 @@
                 
                 placePiece(currentPiece);
                 clearLines();
+                
+                // 清理移动状态，确保新方块不受影响
+                stopContinuousMove();
+                keyPressed = {};
+                
                 currentPiece = createPiece();
                 
                 if (checkCollision(currentPiece)) {
