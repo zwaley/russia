@@ -26,7 +26,7 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 15px;
+            padding: 15px 15px 5px 15px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
             max-width: 400px;
@@ -65,16 +65,22 @@
 
         .game-board {
             position: relative;
-            margin: 0 auto 20px;
+            margin: 0 auto 10px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 90vw;
+            max-width: 350px;
+            height: calc(90vw * 1.7);
+            max-height: 60vh;
         }
 
         #gameCanvas {
             display: block;
             background: rgba(0, 0, 0, 0.8);
+            width: 100%;
+            height: 100%;
         }
 
         .controls {
@@ -283,7 +289,7 @@
         </div>
         
         <div class="game-board">
-            <canvas id="gameCanvas" width="400" height="700"></canvas>
+            <canvas id="gameCanvas" width="350" height="600"></canvas>
             <div class="game-over" id="gameOver">
                 <h2>游戏结束</h2>
                 <p>最终分数: <span id="finalScore">0</span></p>
@@ -300,7 +306,7 @@
         // 游戏配置
         const BOARD_WIDTH = 10;
         const BOARD_HEIGHT = 20;
-        const BLOCK_SIZE = 35;
+        let BLOCK_SIZE = 30;
         
         // 游戏状态
         let board = [];
@@ -317,6 +323,32 @@
         // Canvas 设置
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // 响应式画布初始化
+        function initCanvas() {
+            const gameBoard = document.querySelector('.game-board');
+            const boardRect = gameBoard.getBoundingClientRect();
+            
+            // 设置画布实际像素尺寸
+            canvas.width = BOARD_WIDTH * Math.floor(boardRect.width / BOARD_WIDTH);
+            canvas.height = BOARD_HEIGHT * Math.floor(boardRect.height / BOARD_HEIGHT);
+            
+            // 计算方块大小
+            BLOCK_SIZE = Math.min(
+                Math.floor(canvas.width / BOARD_WIDTH),
+                Math.floor(canvas.height / BOARD_HEIGHT)
+            );
+            
+            // 重新调整画布尺寸以确保精确匹配
+            canvas.width = BOARD_WIDTH * BLOCK_SIZE;
+            canvas.height = BOARD_HEIGHT * BLOCK_SIZE;
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('load', () => {
+            initCanvas();
+            window.addEventListener('resize', initCanvas);
+        });
         
         // 方块形状定义
         const PIECES = {
@@ -561,6 +593,7 @@
         
         // 重新开始游戏
         function restartGame() {
+            initCanvas();
             initBoard();
             currentPiece = createPiece();
             score = 0;
