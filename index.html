@@ -764,17 +764,15 @@
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
             
-            // 如果没有拖拽，则执行手势操作
-            if (!isDragging) {
-                if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                    if (deltaY > 20) {
-                        hardDrop(); // 向下滑动瞬降
-                    } else if (deltaY < -20) {
-                        rotate(); // 向上滑动旋转
-                    }
-                } else if (Math.abs(deltaY) < 15 && Math.abs(deltaX) < 15) {
-                    rotate(); // 轻点旋转
+            // 手势识别：垂直滑动优先
+            if (Math.abs(deltaY) > 30) {
+                if (deltaY > 30) {
+                    hardDrop(); // 向下滑动瞬降
+                } else if (deltaY < -30) {
+                    rotate(); // 向上滑动旋转
                 }
+            } else if (!isDragging && Math.abs(deltaY) < 15 && Math.abs(deltaX) < 15) {
+                rotate(); // 轻点旋转
             }
             
             isDragging = false;
@@ -787,5 +785,26 @@
         gameRunning = true;
         requestAnimationFrame(gameLoop);
     </script>
+    
+    <!-- 操控说明 -->
+    <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 8px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #333;">
+        <h3 style="margin: 0 0 10px 0; color: #2c3e50;">🎮 操控说明</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <strong>🎯 基本操作：</strong><br>
+                • 水平拖拽：精确移动方块<br>
+                • 向下滑动：瞬降到底部<br>
+                • 轻点屏幕：旋转方块<br>
+                • P键：暂停/继续游戏
+            </div>
+            <div>
+                <strong>💡 操作技巧：</strong><br>
+                • 拖拽时方块跟随手指移动<br>
+                • 向下快速滑动触发瞬降<br>
+                • 轻点任意位置都可旋转<br>
+                • 支持触屏和键盘操作
+            </div>
+        </div>
+    </div>
 </body>
 </html>
