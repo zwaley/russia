@@ -596,6 +596,7 @@
             score = 0;
             level = 1;
             lines = 0;
+            dropTime = 0;
             dropInterval = 1000;
             gameRunning = true;
             gamePaused = false;
@@ -608,6 +609,9 @@
             document.getElementById('gameOver').style.display = 'none';
             document.getElementById('pauseBtn').textContent = '暂停';
             updateDisplay();
+            
+            // 重新启动游戏循环
+            requestAnimationFrame(gameLoop);
         }
         
         // 控制函数
@@ -657,12 +661,11 @@
         function startContinuousMove(direction) {
             stopContinuousMove();
             
-            const moveFunction = direction === 'left' ? moveLeft : moveRight;
-            moveFunction(); // 立即移动一次
+            moveOneStep(direction); // 立即移动一次
             
             // 延迟后开始连续移动
             setTimeout(() => {
-                moveInterval = setInterval(moveFunction, moveRepeatDelay);
+                moveInterval = setInterval(() => moveOneStep(direction), moveRepeatDelay);
             }, moveDelay);
         }
         
@@ -677,10 +680,20 @@
             if (!currentPiece) return;
             
             const currentX = currentPiece.x;
-            const direction = targetX > currentX ? 1 : -1;
+            if (currentX === targetX) return;
             
-            while (currentPiece.x !== targetX && !checkCollision(currentPiece, direction, 0)) {
-                currentPiece.x += direction;
+            // 直接移动到目标位置（用于拖拽）
+            if (!checkCollision(currentPiece, targetX - currentX, 0)) {
+                currentPiece.x = targetX;
+            }
+        }
+        
+        function moveOneStep(direction) {
+            if (!currentPiece) return;
+            
+            const dx = direction === 'left' ? -1 : 1;
+            if (!checkCollision(currentPiece, dx, 0)) {
+                currentPiece.x += dx;
             }
         }
         
@@ -816,7 +829,7 @@
             }
             
             // 水平拖拽移动方块
-            if (isDragging && Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (isDragging && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 20) {
                 const canvasRect = canvas.getBoundingClientRect();
                 const relativeX = touchCurrentX - canvasRect.left;
                 const targetBlockX = Math.floor(relativeX / BLOCK_SIZE);
@@ -825,7 +838,10 @@
                 const pieceWidth = currentPiece.shape[0].length;
                 const clampedTargetX = Math.max(0, Math.min(BOARD_WIDTH - pieceWidth, targetBlockX));
                 
-                moveToPosition(clampedTargetX);
+                // 只有当目标位置与当前位置不同时才移动
+                if (clampedTargetX !== currentPiece.x) {
+                    moveToPosition(clampedTargetX);
+                }
             }
         });
         
@@ -844,9 +860,9 @@
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (Math.abs(deltaX) > 30) {
                         if (deltaX > 0) {
-                            moveRight();
+                            moveOneStep('right');
                         } else {
-                            moveLeft();
+                            moveOneStep('left');
                         }
                     }
                 } else {
