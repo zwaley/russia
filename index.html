@@ -767,12 +767,12 @@
             // 如果没有拖拽，则执行手势操作
             if (!isDragging) {
                 if (Math.abs(deltaY) > Math.abs(deltaX)) {
-                    if (deltaY > 30) {
+                    if (deltaY > 20) {
                         hardDrop(); // 向下滑动瞬降
-                    } else if (deltaY < -30) {
+                    } else if (deltaY < -20) {
                         rotate(); // 向上滑动旋转
                     }
-                } else if (Math.abs(deltaY) < 20 && Math.abs(deltaX) < 20) {
+                } else if (Math.abs(deltaY) < 15 && Math.abs(deltaX) < 15) {
                     rotate(); // 轻点旋转
                 }
             }
