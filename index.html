@@ -178,6 +178,59 @@
             background: #45b7aa;
         }
 
+        .instructions {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+        }
+
+        .instructions h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #ffff00;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .instruction-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .instruction-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instruction-item strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+            font-size: 1.1em;
+        }
+
+        .instruction-item ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .instruction-item li {
+            padding: 3px 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .instruction-item li:before {
+            content: "• ";
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
         @media (max-width: 480px) {
             .game-container {
                 padding: 15px;
@@ -192,13 +245,26 @@
                 padding: 12px;
                 font-size: 1em;
             }
+
+            .instruction-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .instruction-item {
+                padding: 12px;
+            }
+
+            .instruction-item li {
+                font-size: 0.85em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="game-header">
-            <h1>俄罗斯方块</h1>
+            <h1>俄罗斯方块 <span style="font-size: 0.5em; color: #ffff00;">v2.0</span></h1>
             <div class="score-board">
                 <div class="score-item">
                     <div>分数</div>
@@ -232,6 +298,32 @@
             <button class="control-btn" id="downBtn">软降</button>
             <button class="control-btn" id="pauseBtn">暂停</button>
         </div>
+
+        <div class="instructions">
+            <h3>操控说明</h3>
+            <div class="instruction-grid">
+                <div class="instruction-item">
+                    <strong>触屏操控：</strong>
+                    <ul>
+                        <li>点击按钮：基本操作</li>
+                        <li>长按左右：连续移动</li>
+                        <li>水平拖拽：快速定位</li>
+                        <li>向下滑动：瞬降</li>
+                        <li>向上滑动/点击：旋转</li>
+                    </ul>
+                </div>
+                <div class="instruction-item">
+                    <strong>键盘操控：</strong>
+                    <ul>
+                        <li>←→：左右移动（可长按）</li>
+                        <li>↑：旋转方块</li>
+                        <li>↓：软降</li>
+                        <li>Enter/X：瞬降</li>
+                        <li>P：暂停/继续</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -252,8 +344,8 @@
         let dropTime = 0;
         let dropInterval = 1000;
         let moveInterval = null;
-        let moveDelay = 150;
-        let moveRepeatDelay = 50;
+        let moveDelay = 100;
+        let moveRepeatDelay = 30;
         
         // Canvas 设置
         const canvas = document.getElementById('gameCanvas');
@@ -456,13 +548,18 @@
         }
         
         // 游戏主循环
+        let lastTime = 0;
         function gameLoop(timestamp) {
             if (!gameRunning || gamePaused) {
-                requestAnimationFrame(gameLoop);
+                if (gameRunning) requestAnimationFrame(gameLoop);
                 return;
             }
             
-            if (timestamp - dropTime > dropInterval) {
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+            
+            dropTime += deltaTime;
+            if (dropTime >= dropInterval) {
                 if (currentPiece && !checkCollision(currentPiece, 0, 1)) {
                     currentPiece.y++;
                 } else {
@@ -478,7 +575,7 @@
                         return;
                     }
                 }
-                dropTime = timestamp;
+                dropTime = 0;
             }
             
             drawBoard();
@@ -563,10 +660,9 @@
             const moveFunction = direction === 'left' ? moveLeft : moveRight;
             moveFunction(); // 立即移动一次
             
+            // 延迟后开始连续移动
             setTimeout(() => {
-                if (moveInterval) {
-                    moveInterval = setInterval(moveFunction, moveRepeatDelay);
-                }
+                moveInterval = setInterval(moveFunction, moveRepeatDelay);
             }, moveDelay);
         }
         
@@ -614,14 +710,12 @@
         
         // 左右移动按钮 - 支持长按连续移动
         leftBtn.addEventListener('mousedown', () => {
-            moveInterval = true;
             startContinuousMove('left');
         });
         leftBtn.addEventListener('mouseup', stopContinuousMove);
         leftBtn.addEventListener('mouseleave', stopContinuousMove);
         leftBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            moveInterval = true;
             startContinuousMove('left');
         });
         leftBtn.addEventListener('touchend', (e) => {
@@ -630,14 +724,12 @@
         });
         
         rightBtn.addEventListener('mousedown', () => {
-            moveInterval = true;
             startContinuousMove('right');
         });
         rightBtn.addEventListener('mouseup', stopContinuousMove);
         rightBtn.addEventListener('mouseleave', stopContinuousMove);
         rightBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            moveInterval = true;
             startContinuousMove('right');
         });
         rightBtn.addEventListener('touchend', (e) => {
@@ -662,11 +754,9 @@
             
             switch(e.key) {
                 case 'ArrowLeft':
-                    moveInterval = true;
                     startContinuousMove('left');
                     break;
                 case 'ArrowRight':
-                    moveInterval = true;
                     startContinuousMove('right');
                     break;
                 case 'ArrowDown':
