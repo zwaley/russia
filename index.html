@@ -291,35 +291,28 @@
         </div>
         
         <div class="controls">
-            <button class="control-btn" id="leftBtn">←</button>
-            <button class="control-btn" id="rightBtn">→</button>
-            <button class="control-btn" id="rotateBtn">旋转</button>
-            <button class="control-btn" id="hardDropBtn">瞬降</button>
-            <button class="control-btn" id="downBtn">软降</button>
             <button class="control-btn" id="pauseBtn">暂停</button>
         </div>
 
         <div class="instructions">
-            <h3>操控说明</h3>
+            <h3>滑屏操控说明</h3>
             <div class="instruction-grid">
                 <div class="instruction-item">
-                    <strong>触屏操控：</strong>
+                    <strong>基本手势：</strong>
                     <ul>
-                        <li>点击按钮：基本操作</li>
-                        <li>长按左右：连续移动</li>
-                        <li>水平拖拽：快速定位</li>
-                        <li>向下滑动：瞬降</li>
-                        <li>向上滑动/点击：旋转</li>
+                        <li>水平拖拽：精确移动方块位置</li>
+                        <li>向上滑动：旋转方块</li>
+                        <li>向下滑动：瞬降到底部</li>
+                        <li>轻点屏幕：旋转方块</li>
                     </ul>
                 </div>
                 <div class="instruction-item">
-                    <strong>键盘操控：</strong>
+                    <strong>操作技巧：</strong>
                     <ul>
-                        <li>←→：左右移动（可长按）</li>
-                        <li>↑：旋转方块</li>
-                        <li>↓：软降</li>
-                        <li>Enter/X：瞬降</li>
-                        <li>P：暂停/继续</li>
+                        <li>拖拽时方块会跟随手指移动</li>
+                        <li>向下快速滑动可瞬间落底</li>
+                        <li>短距离滑动可微调位置</li>
+                        <li>支持键盘操作（P键暂停）</li>
                     </ul>
                 </div>
             </div>
@@ -343,9 +336,6 @@
         let gamePaused = false;
         let dropTime = 0;
         let dropInterval = 1000;
-        let moveInterval = null;
-        let moveDelay = 100;
-        let moveRepeatDelay = 30;
         
         // Canvas 设置
         const canvas = document.getElementById('gameCanvas');
@@ -569,7 +559,6 @@
                 }
                 
                 // 清理移动状态，确保新方块不受影响
-                stopContinuousMove();
                 keyPressed = {};
                 
                 currentPiece = createPiece();
@@ -606,7 +595,6 @@
             gamePaused = false;
             
             // 清理移动状态
-            stopContinuousMove();
             keyPressed = {};
             isDragging = false;
             
@@ -656,7 +644,6 @@
                 clearLines();
                 
                 // 清理移动状态，确保新方块不受影响
-                stopContinuousMove();
                 keyPressed = {};
                 
                 currentPiece = createPiece();
@@ -664,24 +651,6 @@
                 if (checkCollision(currentPiece)) {
                     gameOver();
                 }
-            }
-        }
-        
-        function startContinuousMove(direction) {
-            stopContinuousMove();
-            
-            moveOneStep(direction); // 立即移动一次
-            
-            // 延迟后开始连续移动
-            setTimeout(() => {
-                moveInterval = setInterval(() => moveOneStep(direction), moveRepeatDelay);
-            }, moveDelay);
-        }
-        
-        function stopContinuousMove() {
-            if (moveInterval) {
-                clearInterval(moveInterval);
-                moveInterval = null;
             }
         }
         
@@ -694,15 +663,6 @@
             // 直接移动到目标位置（用于拖拽）
             if (!checkCollision(currentPiece, targetX - currentX, 0)) {
                 currentPiece.x = targetX;
-            }
-        }
-        
-        function moveOneStep(direction) {
-            if (!currentPiece) return;
-            
-            const dx = direction === 'left' ? -1 : 1;
-            if (!checkCollision(currentPiece, dx, 0)) {
-                currentPiece.x += dx;
             }
         }
         
@@ -723,46 +683,9 @@
         }
         
         // 事件监听器
-        const leftBtn = document.getElementById('leftBtn');
-        const rightBtn = document.getElementById('rightBtn');
-        const downBtn = document.getElementById('downBtn');
-        const rotateBtn = document.getElementById('rotateBtn');
-        const hardDropBtn = document.getElementById('hardDropBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         
-        // 左右移动按钮 - 支持长按连续移动
-        leftBtn.addEventListener('mousedown', () => {
-            startContinuousMove('left');
-        });
-        leftBtn.addEventListener('mouseup', stopContinuousMove);
-        leftBtn.addEventListener('mouseleave', stopContinuousMove);
-        leftBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            startContinuousMove('left');
-        });
-        leftBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            stopContinuousMove();
-        });
-        
-        rightBtn.addEventListener('mousedown', () => {
-            startContinuousMove('right');
-        });
-        rightBtn.addEventListener('mouseup', stopContinuousMove);
-        rightBtn.addEventListener('mouseleave', stopContinuousMove);
-        rightBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            startContinuousMove('right');
-        });
-        rightBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            stopContinuousMove();
-        });
-        
-        // 其他按钮
-        downBtn.addEventListener('click', moveDown);
-        rotateBtn.addEventListener('click', rotate);
-        hardDropBtn.addEventListener('click', hardDrop);
+        // 暂停按钮
         pauseBtn.addEventListener('click', togglePause);
         
         // 键盘控制
@@ -775,25 +698,6 @@
             keyPressed[e.key] = true;
             
             switch(e.key) {
-                case 'ArrowLeft':
-                    startContinuousMove('left');
-                    break;
-                case 'ArrowRight':
-                    startContinuousMove('right');
-                    break;
-                case 'ArrowDown':
-                    moveDown();
-                    break;
-                case 'ArrowUp':
-                case ' ':
-                    e.preventDefault();
-                    rotate();
-                    break;
-                case 'Enter':
-                case 'x':
-                case 'X':
-                    hardDrop();
-                    break;
                 case 'p':
                 case 'P':
                     togglePause();
@@ -803,10 +707,6 @@
         
         document.addEventListener('keyup', (e) => {
             keyPressed[e.key] = false;
-            
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                stopContinuousMove();
-            }
         });
         
         // 触摸控制
@@ -866,22 +766,14 @@
             
             // 如果没有拖拽，则执行手势操作
             if (!isDragging) {
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    if (Math.abs(deltaX) > 30) {
-                        if (deltaX > 0) {
-                            moveOneStep('right');
-                        } else {
-                            moveOneStep('left');
-                        }
-                    }
-                } else {
-                    if (deltaY > 50) {
-                        hardDrop(); // 向下滑动快速下落
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    if (deltaY > 30) {
+                        hardDrop(); // 向下滑动瞬降
                     } else if (deltaY < -30) {
                         rotate(); // 向上滑动旋转
-                    } else if (Math.abs(deltaY) < 20 && Math.abs(deltaX) < 20) {
-                        rotate(); // 轻点旋转
                     }
+                } else if (Math.abs(deltaY) < 20 && Math.abs(deltaX) < 20) {
+                    rotate(); // 轻点旋转
                 }
             }
             
