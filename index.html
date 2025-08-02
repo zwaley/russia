@@ -137,11 +137,7 @@
             grid-row: 2;
         }
 
-        #pauseBtn {
-            grid-column: 3 / 5;
-            grid-row: 2;
-            background: rgba(255, 100, 100, 0.3);
-        }
+
 
         .game-over {
             position: absolute;
@@ -279,11 +275,15 @@
                     <div>行数</div>
                     <div id="lines">0</div>
                 </div>
+                <div class="score-item" style="cursor: pointer;" onclick="togglePause()">
+                    <div>暂停</div>
+                    <div id="pauseStatus">P</div>
+                </div>
             </div>
         </div>
         
         <div class="game-board">
-            <canvas id="gameCanvas" width="300" height="600"></canvas>
+            <canvas id="gameCanvas" width="400" height="700"></canvas>
             <div class="game-over" id="gameOver">
                 <h2>游戏结束</h2>
                 <p>最终分数: <span id="finalScore">0</span></p>
@@ -291,9 +291,7 @@
             </div>
         </div>
         
-        <div class="controls">
-            <button class="control-btn" id="pauseBtn">暂停</button>
-        </div>
+
 
 
     </div>
@@ -302,7 +300,7 @@
         // 游戏配置
         const BOARD_WIDTH = 10;
         const BOARD_HEIGHT = 20;
-        const BLOCK_SIZE = 30;
+        const BLOCK_SIZE = 35;
         
         // 游戏状态
         let board = [];
@@ -578,7 +576,7 @@
             isDragging = false;
             
             document.getElementById('gameOver').style.display = 'none';
-            document.getElementById('pauseBtn').textContent = '暂停';
+            document.getElementById('pauseStatus').textContent = 'P';
             updateDisplay();
             
             // 重新启动游戏循环
@@ -658,14 +656,8 @@
             if (!gameRunning) return;
             
             gamePaused = !gamePaused;
-            document.getElementById('pauseBtn').textContent = gamePaused ? '继续' : '暂停';
+            document.getElementById('pauseStatus').textContent = gamePaused ? '继续' : 'P';
         }
-        
-        // 事件监听器
-        const pauseBtn = document.getElementById('pauseBtn');
-        
-        // 暂停按钮
-        pauseBtn.addEventListener('click', togglePause);
         
         // 键盘控制
         let keyPressed = {};
