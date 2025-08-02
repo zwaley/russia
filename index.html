@@ -26,27 +26,37 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 10px 10px 60px 10px;
+            padding: 10px;
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
             max-width: 420px;
             width: 95vw;
-            margin: 5px auto 60px auto;
-            min-height: calc(100vh - 70px);
+            margin: 5px auto;
+            min-height: calc(100vh - 10px);
             display: flex;
             flex-direction: column;
         }
 
         .game-header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 5px;
             color: white;
         }
 
         .game-header h1 {
             font-size: 1.3em;
-            margin-bottom: 3px;
+            margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        .game-controls {
+            font-size: 0.6em;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: right;
+            line-height: 1.2;
         }
 
         .score-board {
@@ -272,7 +282,12 @@
     <div class="game-container">
         <div class="game-header">
             <h1>俄罗斯方块 <span style="font-size: 0.5em; color: #ffff00;">v2.0</span></h1>
-            <div class="score-board">
+            <div class="game-controls">
+                水平拖拽移动<br>
+                向下滑动瞬降<br>
+                轻点旋转 | P键暂停
+            </div>
+        </div>    <div class="score-board">
                 <div class="score-item">
                     <div>分数</div>
                     <div id="score">0</div>
@@ -795,9 +810,6 @@
     </script>
 </body>
 
-<!-- 操控说明 -->
-<div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 12px; background-color: rgba(0, 0, 0, 0.8); color: white; text-align: center; font-family: Arial, sans-serif; font-size: 12px; z-index: 1000;">
-    🎮 操控：水平拖拽移动 | 向下滑动瞬降 | 轻点旋转 | P键暂停
-</div>
+
 
 </html>
